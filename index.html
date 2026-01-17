@@ -494,15 +494,18 @@
                             </div>
 
                             {/* Mapa Incorporado (Placeholder) */}
-                            <div className="h-80 w-full rounded-2xl overflow-hidden shadow-xl border-4 border-wedding-cream">
+                            {/* FIX: Adicionado z-10 para garantir renderização correta no mobile */}
+                            <div className="h-80 w-full rounded-2xl overflow-hidden shadow-xl border-4 border-wedding-cream relative z-10">
                                 <iframe 
+                                    key="google-map-embed"
                                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3686.5298082379472!2d-44.147949524702085!3d-22.484296879554567!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9e99c4067ebabb%3A0x9d457fdf2830787d!2sCh%C3%A1cara%20Recanto%20da%20Uniao!5e0!3m2!1spt-BR!2sbr!4v1768658211285!5m2!1spt-BR!2sbr"
                                     width="100%" 
                                     height="100%" 
                                     style={{border:0}} 
-                                    allowFullScreen
+                                    allowFullScreen={true}
                                     loading="eager"
                                     referrerPolicy="no-referrer-when-downgrade"
+                                    title="Mapa do Local"
                                 >
                                 </iframe>
                             </div>
