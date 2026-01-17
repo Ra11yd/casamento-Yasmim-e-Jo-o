@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casamento de Yasmim & João - 02/05/2026</title>
+    
+    <!-- FAVICON ADICIONADO AQUI -->    
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/177/177129.png" type="image/jpeg">
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel para JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Pinyon+Script&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        // --- PALETA DE CORES (EDITE AQUI) ---
+                        'wedding-cream': '#FAF7F5',   // Fundo (Off-white quente)
+                        'wedding-gold': '#C5A028',    // Dourado
+                        'wedding-rose': '#EADBC8',    // Areia / Nude (Para fundos suaves)
+                        'wedding-olive': '#1E90FF',   // Terracotta / Ferrugem (Cor Principal)
+                        'wedding-text': '#000000',    // Marrom Café (Texto geral)
+                    },
+                    fontFamily: {
+                        'script': ['"Pinyon Script"', 'cursive'],
+                        'serif': ['"Cormorant Garamond"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #F9F7F2;
+            color: #5C5552;
+            overflow-x: hidden;
+        }
+        
+        .smooth-scroll {
+            scroll-behavior: smooth;
+        }
+
+        /* Animação de Pétalas */
+        .petal {
+            position: fixed;
+            top: -10%;
+            z-index: 0;
+            user-select: none;
+            pointer-events: none;
+            animation-name: falling-petal;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+        }
+
+        @keyframes falling-petal {
+            0% { top: -10%; transform: translateX(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.8; }
+            100% { top: 110%; transform: translateX(100px) rotate(360deg); opacity: 0; }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 1s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F9F7F2; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D4AF37; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #b5942f; 
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // --- CONFIGURAÇÕES FÁCEIS (EDITE AQUI) ---
+        
+        // 1. WhatsApp para Confirmação de Presença (RSVP)
+        // Coloque apenas números (com código do país e DDD). Ex: 5511999999999
+        const WHATSAPP_NUMBER = "5524998815835"; 
+        const WHATSAPP_MESSAGE = "Olá! Gostaria de confirmar minha presença no casamento de Yasmim & João.";
+
+        // 2. Configurações de Data
+        // Data do início do namoro
+        const DATE_RELATIONSHIP_START = new Date('2016-02-17T00:00:00');
+        // Data do casamento
+        const DATE_WEDDING = new Date('2026-05-02T16:00:00');
+
+        // --- Componente de Ícone (Wrapper para Lucide) ---
+        const Icon = ({ name, size = 24, className }) => {
+            useEffect(() => {
+                lucide.createIcons();
+            }, [name]);
+            return <i data-lucide={name} width={size} height={size} className={className}></i>;
+        };
+
+        // --- Componente: Pétalas Caindo ---
+        const PetalsEffect = () => {
+            const [petals, setPetals] = useState([]);
+
+            useEffect(() => {
+                const createPetal = () => {
+                    return {
+                        id: Math.random(),
+                        left: Math.random() * 100 + 'vw',
+                        animationDuration: Math.random() * 5 + 5 + 's', // 5 a 10s
+                        delay: Math.random() * 5 + 's',
+                        size: Math.random() * 10 + 10 + 'px', // 10 a 20px
+                        color: Math.random() > 0.5 ? '#E3C9CE' : '#F5E6EA' // Rosé tons
+                    };
+                };
+
+                const initialPetals = Array.from({ length: 25 }).map(createPetal);
+                setPetals(initialPetals);
+            }, []);
+
+            return (
+                <div className="fixed inset-0 pointer-events-none overflow-hidden h-full w-full z-0">
+                    {petals.map(petal => (
+                        <div
+                            key={petal.id}
+                            className="petal rounded-full opacity-60"
+                            style={{
+                                left: petal.left,
+                                width: petal.size,
+                                height: petal.size,
+                                backgroundColor: petal.color,
+                                animationDuration: petal.animationDuration,
+                                animationDelay: petal.delay
+                            }}
+                        />
+                    ))}
+                </div>
+            );
+        };
+
+        // --- Componente: Unidade do Contador ---
+        const TimeUnit = ({ value, label }) => (
+            <div className="flex flex-col items-center mx-1 md:mx-3 my-2">
+                <div className="bg-white/80 backdrop-blur-sm border border-wedding-gold/30 w-16 h-16 md:w-20 md:h-20 flex items-center justify-center rounded-lg shadow-sm">
+                    <span className="font-serif text-xl md:text-3xl font-semibold text-wedding-text">{value}</span>
+                </div>
+                <span className="text-xs md:text-sm uppercase tracking-widest mt-2 text-wedding-olive font-medium">{label}</span>
+            </div>
+        );
+
+        // --- Lógica do Contador ---
+        const TimerDisplay = ({ targetDate, title, isCountDown = false }) => {
+            const [timeLeft, setTimeLeft] = useState({ years: 0, months: 0, days: 0, hours: 0, minutes: 0, seconds: 0 });
+            const [isPast, setIsPast] = useState(false);
+
+            useEffect(() => {
+                const calculateTime = () => {
+                    const now = new Date();
+                    const diff = targetDate - now;
+
+                    // Se for contagem regressiva e já passou
+                    if (isCountDown && diff < 0) {
+                        setIsPast(true);
+                        // Inverter para contar quanto tempo de casados
+                        const timeSince = now - targetDate;
+                        updateState(timeSince);
+                    } else if (!isCountDown) {
+                        // Contagem progressiva (juntos desde...)
+                        const timeSince = now - targetDate;
+                        updateState(timeSince);
+                    } else {
+                        // Contagem regressiva futura
+                        setIsPast(false);
+                        updateState(diff);
+                    }
+                };
+
+                const updateState = (ms) => {
+                    const seconds = Math.floor((ms / 1000) % 60);
+                    const minutes = Math.floor((ms / 1000 / 60) % 60);
+                    const hours = Math.floor((ms / (1000 * 60 * 60)) % 24);
+                    const days = Math.floor(ms / (1000 * 60 * 60 * 24));
+                    
+                    // Cálculo aproximado de anos/meses para simplificação visual
+                    const years = Math.floor(days / 365);
+                    const remainingDays = days % 365;
+                    const months = Math.floor(remainingDays / 30);
+                    const finalDays = remainingDays % 30;
+
+                    setTimeLeft({ years, months, days: finalDays, hours, minutes, seconds });
+                };
+
+                const timer = setInterval(calculateTime, 1000);
+                calculateTime(); // Call immediately
+
+                return () => clearInterval(timer);
+            }, [targetDate, isCountDown]);
+
+            // Título dinâmico
+            let displayTitle = title;
+            if (isCountDown && isPast) {
+                displayTitle = "Casados há:";
+            } else if (isCountDown && !isPast) {
+                displayTitle = "Contagem Regressiva:";
+            }
+
+            return (
+                <div className="flex flex-col items-center p-6 bg-white/40 rounded-xl shadow-lg border border-white backdrop-blur-md w-full max-w-lg transition-transform hover:scale-105 duration-500">
+                    <h3 className="font-script text-3xl md:text-4xl text-wedding-olive mb-6">{displayTitle}</h3>
+                    <div className="flex flex-wrap justify-center">
+                        {timeLeft.years > 0 && <TimeUnit value={timeLeft.years} label="Anos" />}
+                        {(timeLeft.years > 0 || timeLeft.months > 0) && <TimeUnit value={timeLeft.months} label="Meses" />}
+                        <TimeUnit value={timeLeft.days} label="Dias" />
+                        <TimeUnit value={timeLeft.hours} label="Horas" />
+                        <TimeUnit value={timeLeft.minutes} label="Min" />
+                        <TimeUnit value={timeLeft.seconds} label="Seg" />
+                    </div>
+                    <div className="mt-4 text-wedding-gold">
+                        <Icon name="heart" size={20} className="fill-wedding-rose stroke-wedding-rose" />
+                    </div>
+                </div>
+            );
+        };
+
+        // --- Componente: Galeria ---
+        const Gallery = () => {
+            const [selectedImage, setSelectedImage] = useState(null);
+
+            // Placeholders de imagens elegantes
+            const images = [
+                "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=800",
+                "https://harpersbazaar.uol.com.br/wp-content/uploads/2022/02/casal-de-noivos-1.jpg",
+                "https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&q=80&w=800",
+                "https://i.pinimg.com/736x/2b/64/02/2b640280a60f1292b72c2b6542890ffc.jpg",
+                "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&q=80&w=800",
+                "https://images.unsplash.com/photo-1532712938310-34cb3982ef74?auto=format&fit=crop&q=80&w=800",
+            ];
+
+            return (
+                <div className="py-8">
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        {images.map((src, index) => (
+                            <div 
+                                key={index} 
+                                className="overflow-hidden rounded-lg cursor-pointer shadow-md group aspect-[3/4]"
+                                onClick={() => setSelectedImage(src)}
+                            >
+                                <img 
+                                    src={src} 
+                                    alt={`Foto ${index + 1}`} 
+                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                />
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Lightbox Modal */}
+                    {selectedImage && (
+                        <div 
+                            className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 animate-opacity"
+                            onClick={() => setSelectedImage(null)}
+                        >
+                            <div className="relative max-w-4xl w-full max-h-screen">
+                                <button 
+                                    className="absolute -top-10 right-0 text-white hover:text-wedding-gold"
+                                    onClick={() => setSelectedImage(null)}
+                                >
+                                    <Icon name="x" size={32} />
+                                </button>
+                                <img 
+                                    src={selectedImage} 
+                                    className="w-full h-auto max-h-[90vh] object-contain rounded-sm shadow-2xl" 
+                                    alt="Zoom"
+                                />
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // --- Componente Principal: App ---
+        const App = () => {
+            const [isPlaying, setIsPlaying] = useState(false);
+            const audioRef = useRef(null);
+
+            // Toggle Music Atualizado para tratar erros de reprodução
+            const toggleMusic = async () => {
+                if (!audioRef.current) return;
+
+                try {
+                    if (isPlaying) {
+                        audioRef.current.pause();
+                        setIsPlaying(false);
+                    } else {
+                        // Tenta reproduzir. Se o arquivo não existir ou o formato for inválido, cairá no catch.
+                        // O clique do usuário no botão autoriza o navegador a tocar o som.
+                        await audioRef.current.play();
+                        setIsPlaying(true);
+                    }
+                } catch (error) {
+                    console.error("Erro ao reproduzir áudio:", error);
+                    setIsPlaying(false); // Garante que o ícone volte para "play" se falhar
+                    
+                    // Feedback amigável caso o áudio falhe (ex: arquivo não encontrado)
+                    alert("Não foi possível tocar a música. Verifique se o arquivo 'musica.mp3' está na mesma pasta do site.");
+                }
+            };
+
+            return (
+                <div className="font-serif relative">
+                    <PetalsEffect />
+                    
+                    {/* Botão de Música Flutuante */}
+                    <button 
+                        onClick={toggleMusic}
+                        className="fixed bottom-6 right-6 z-50 bg-wedding-gold/80 text-white p-3 rounded-full shadow-lg hover:bg-wedding-gold transition-colors animate-pulse hover:animate-none"
+                        title={isPlaying ? "Pausar Música" : "Tocar Música"}
+                    >
+                        <Icon name={isPlaying ? "pause" : "music"} size={24} />
+                    </button>
+                    
+                    {/* ELEMENTO DE ÁUDIO CORRIGIDO */}
+                    {/* Tenta carregar 'musica.mp3' local. Se não achar, não toca nada ou usa o fallback se configurado no source. */}
+                    <audio ref={audioRef} loop>
+                        <source src="./musica.mp3" type="audio/mpeg" />
+                        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg" />
+                    </audio>
+
+                    {/* Hero Section */}
+                    {/* Adicionado pb-24 para garantir espaço para a seta não sobrepor o conteúdo */}
+                    <header className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden pb-24">
+                        {/* Imagem de Fundo com Parallax e Overlay */}
+                        <div className="absolute inset-0 z-[-1]">
+                            
+                            {/* --- IMAGEM DE FUNDO PRINCIPAL (TROQUE O LINK NO SRC ABAIXO) --- */}
+                            <img 
+                                src="https://casasales.com.br/wp-content/uploads/2021/01/groom-putting-ring-on-bride-s-finger-1024x683.jpg" 
+                                className="w-full h-full object-cover opacity-90"
+                                alt="Casal Background"
+                            />
+                            
+                            <div className="absolute inset-0 bg-wedding-cream/40 mix-blend-multiply"></div>
+                            <div className="absolute inset-0 bg-gradient-to-t from-wedding-cream via-transparent to-transparent"></div>
+                        </div>
+
+                        <div className="z-10 fade-in-up space-y-6">
+                            <span className="uppercase tracking-[0.3em] text-wedding-text text-sm md:text-base mb-4 block">Save the Date</span>
+                            <h1 className="font-script text-7xl md:text-9xl text-wedding-olive drop-shadow-sm">
+                                Yasmim & João
+                            </h1>
+                            <p className="font-serif text-xl md:text-2xl italic text-wedding-text max-w-2xl mx-auto mt-4 leading-relaxed">
+                                "O amor nos uniu, e para sempre nos guiará"
+                            </p>
+                            
+                            <div className="flex flex-col md:flex-row gap-8 items-center justify-center mt-12">
+                                <div className="border-t border-b border-wedding-gold py-2 px-8">
+                                    <span className="text-2xl md:text-3xl tracking-widest text-wedding-text">02 . 05 . 2026</span>
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col sm:flex-row gap-4 mt-12 justify-center items-center">
+                                <a 
+                                    href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="px-8 py-3 bg-wedding-olive text-white rounded-full hover:bg-opacity-90 transition-all uppercase tracking-wider text-sm shadow-lg transform hover:-translate-y-1 flex items-center justify-center gap-2"
+                                >
+                                    <Icon name="message-circle" size={18} /> Confirmar Presença
+                                </a>
+                                <a href="https://casamento.wedy.com" target="_blank" className="px-8 py-3 bg-wedding-gold text-white rounded-full hover:bg-opacity-90 transition-all uppercase tracking-wider text-sm shadow-lg flex items-center justify-center gap-2 transform hover:-translate-y-1">
+                                    <Icon name="gift" size={16} /> Escolher Presente
+                                </a>
+                            </div>
+                        </div>
+                        
+                        {/* Adicionado z-20 para ficar acima de outros elementos e ajustado posicionamento */}
+                        <div className="absolute bottom-8 left-0 right-0 mx-auto w-full flex justify-center animate-bounce text-wedding-olive z-20 pointer-events-none">
+                            <Icon name="chevron-down" size={32} />
+                        </div>
+                    </header>
+
+                    {/* Nossa História */}
+                    <section className="py-20 md:py-32 px-4 bg-white relative">
+                        <div className="max-w-4xl mx-auto text-center">
+                            <h2 className="font-script text-5xl md:text-6xl text-wedding-olive mb-8">Nossa História</h2>
+                            <div className="w-24 h-px bg-wedding-gold mx-auto mb-10"></div>
+                            <p className="text-lg md:text-xl leading-loose text-gray-600 mb-12">
+                                Tudo começou em um dia de verão, quando nossos olhares se cruzaram pela primeira vez. 
+                                Desde aquele 17 de fevereiro de 2016, soubemos que havia algo especial. 
+                                Entre risos, viagens e sonhos compartilhados, construímos um amor sólido e verdadeiro.
+                                Agora, estamos prontos para o capítulo mais importante de nossas vidas.
+                            </p>
+                        </div>
+                    </section>
+
+                    {/* Contadores Especiais (Seção Destaque) */}
+                    <section className="py-20 px-4 bg-wedding-cream border-y border-wedding-gold/20">
+                        <div className="max-w-7xl mx-auto">
+                            <h2 className="font-script text-center text-5xl md:text-6xl text-wedding-rose mb-16">O Tempo do Nosso Amor</h2>
+                            
+                            <div className="flex flex-col lg:flex-row gap-10 items-center justify-center">
+                                {/* Contador 1: Juntos desde */}
+                                <TimerDisplay 
+                                    targetDate={DATE_RELATIONSHIP_START} 
+                                    title="Juntos desde:" 
+                                    isCountDown={false} 
+                                />
+
+                                <div className="hidden lg:block h-32 w-px bg-wedding-gold/40"></div>
+                                <div className="lg:hidden w-32 h-px bg-wedding-gold/40 my-4"></div>
+
+                                {/* Contador 2: Casamento */}
+                                <TimerDisplay 
+                                    targetDate={DATE_WEDDING} 
+                                    title="O Grande Dia:" 
+                                    isCountDown={true} 
+                                />
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Detalhes do Evento */}
+                    <section className="py-20 md:py-32 px-4 bg-white">
+                        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                            
+                            <div className="space-y-8 text-center md:text-left">
+                                <h2 className="font-script text-5xl md:text-6xl text-wedding-olive">O Grande Dia</h2>
+                                <div className="space-y-6 text-lg text-gray-600">
+                                    <div className="flex items-center gap-4 justify-center md:justify-start">
+                                        <div className="p-3 bg-wedding-cream rounded-full text-wedding-gold">
+                                            <Icon name="calendar" size={24} />
+                                        </div>
+                                        <div className="text-left">
+                                            <p className="font-bold uppercase tracking-wider text-sm">Data</p>
+                                            <p className="text-xl">02 de Maio de 2026</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-4 justify-center md:justify-start">
+                                        <div className="p-3 bg-wedding-cream rounded-full text-wedding-gold">
+                                            <Icon name="clock" size={24} />
+                                        </div>
+                                        <div className="text-left">
+                                            <p className="font-bold uppercase tracking-wider text-sm">Horário</p>
+                                            <p className="text-xl">16:00 horas</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-4 justify-center md:justify-start">
+                                        <div className="p-3 bg-wedding-cream rounded-full text-wedding-gold">
+                                            <Icon name="map-pin" size={24} />
+                                        </div>
+                                        <div className="text-left">
+                                            <p className="font-bold uppercase tracking-wider text-sm">Local</p>
+                                            <p className="text-xl">Chácara Recanto da Uniao</p>
+                                            <p className="text-base text-gray-500">Estr. Nossa Sra. da União, 3200 - Retiro, Volta Redonda - RJ, 27277-225</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Mapa Incorporado (Placeholder) */}
+                            <div className="h-80 w-full rounded-2xl overflow-hidden shadow-xl border-4 border-wedding-cream">
+                                <iframe 
+                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3686.5298082379472!2d-44.147949524702085!3d-22.484296879554567!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9e99c4067ebabb%3A0x9d457fdf2830787d!2sCh%C3%A1cara%20Recanto%20da%20Uniao!5e0!3m2!1spt-BR!2sbr!4v1768658211285!5m2!1spt-BR!2sbr"
+                                    width="100%" 
+                                    height="100%" 
+                                    style={{border:0}} 
+                                    allowFullScreen="" 
+                                    loading="lazy">
+                                </iframe>
+                            </div>
+
+                        </div>
+                    </section>
+
+                    {/* Galeria de Fotos */}
+                    <section className="py-20 px-4 bg-wedding-cream">
+                        <div className="max-w-6xl mx-auto text-center">
+                            <h2 className="font-script text-5xl md:text-6xl text-wedding-olive mb-4">Momentos Inesquecíveis</h2>
+                            <p className="mb-10 text-gray-500 italic">Clique nas fotos para ampliar</p>
+                            <Gallery />
+                        </div>
+                    </section>
+
+                    {/* Lista de Presentes */}
+                    <section className="py-24 px-4 bg-white text-center relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-32 h-32 border-t-4 border-l-4 border-wedding-rose/30 rounded-tl-3xl m-8"></div>
+                        <div className="absolute bottom-0 right-0 w-32 h-32 border-b-4 border-r-4 border-wedding-rose/30 rounded-br-3xl m-8"></div>
+
+                        <div className="max-w-2xl mx-auto z-10 relative">
+                            <Icon name="gift" size={48} className="mx-auto text-wedding-gold mb-6" />
+                            <h2 className="font-script text-5xl md:text-6xl text-wedding-text mb-6">Lista de Presentes</h2>
+                            <p className="text-lg text-gray-600 mb-10 leading-relaxed">
+                                A sua presença é o nosso maior presente! Mas, se desejar nos presentear de outra forma, 
+                                preparamos uma lista com muito carinho para nos ajudar a construir nosso novo lar e viver a lua de mel dos sonhos.
+                            </p>
+                            <a 
+                                href="https://casamento.wedy.com" 
+                                target="_blank"
+                                className="inline-block bg-wedding-rose/40 border border-wedding-olive/30 text-wedding-text hover:text-white hover:bg-wedding-olive text-lg font-semibold px-10 py-4 rounded-full shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+                            >
+                                🎁 Escolher presente aos noivos
+                            </a>
+                        </div>
+                    </section>
+
+                    {/* Footer */}
+                    <footer className="bg-wedding-olive/90 text-white py-16 px-4 text-center">
+                        <div className="max-w-4xl mx-auto space-y-6">
+                            <h2 className="font-script text-5xl md:text-6xl">Yasmim & João</h2>
+                            <p className="font-serif text-xl italic opacity-90">"O amor é paciente, o amor é bondoso."</p>
+                            
+                            
+                            <div className="border-t border-white/20 mt-12 pt-8 text-sm opacity-60">
+                                <p>Desenvolvido por RG7ech.</p>
+                                <p>Rallyd Ghazzaoui</p>
+                                <p>©2026</p>
+                                 <p>Solicite um orçamento</p> 
+                                 <p>⬇⬇</p> 
+                                <div className="flex justify-center gap-6 mt-8 opacity-80">
+                                <a href="https://www.instagram.com/rg7ech/" className="hover:text-wedding-gold transition"><Icon name="instagram" /></a>
+                                <a href="professorralllydghazaouiti@gmail.com" className="hover:text-wedding-gold transition"><Icon name="mail" /></a>
+                            </div>
+
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
